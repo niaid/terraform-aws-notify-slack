@@ -3,7 +3,7 @@ data "aws_partition" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  sns_topic_arn = try(
+  sns_topic_arn = var.sns_topic_arn != "" ? var.sns_topic_arn : try(
     aws_sns_topic.this[0].arn,
     "arn:${data.aws_partition.current.id}:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${var.sns_topic_name}",
     ""

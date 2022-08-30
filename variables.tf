@@ -39,6 +39,12 @@ variable "sns_topic_name" {
   type        = string
 }
 
+variable "sns_topic_arn" {
+  description = "The SNS topic ARN to subscribe to"
+  type        = string
+  default     = ""
+}
+
 variable "sns_topic_kms_key_id" {
   description = "ARN of the KMS key used for enabling SSE on the topic"
   type        = string
