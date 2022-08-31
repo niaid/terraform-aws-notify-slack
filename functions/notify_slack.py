@@ -175,10 +175,24 @@ def format_guardduty_finding(message: Dict[str, Any], region: str) -> Dict[str, 
                 "value": f"`{service['eventLastSeen']}`",
                 "short": True,
             },
-            {"title": "Severity", "value": f"`{severity}`", "short": True},
+            {
+                "title": "Severity",
+                "value": f"`{severity}`",
+                "short": True
+            },
             {
                 "title": "Count",
                 "value": f"`{service['count']}`",
+                "short": True,
+            },
+            {
+                "title": "Account ID",
+                "value": f"`{detail['accountId']}`",
+                "short": True,
+            },
+            {
+                "title": "Region",
+                "value": f"`{detail['region']}`",
                 "short": True,
             },
             {
