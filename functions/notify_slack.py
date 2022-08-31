@@ -204,6 +204,87 @@ def format_guardduty_finding(message: Dict[str, Any], region: str) -> Dict[str, 
         "text": f"AWS GuardDuty Finding - {detail.get('title')}",
     }
 
+def format_security_announcements(message: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Format GuardDuty & SecurityHub announcements into Slack message format
+
+    :params message: SNS message body containing the announcements
+    :returns: formatted Slack message payload
+    """
+
+    if "findingDetails" in message:
+        detail = message["findingDetails"][0]
+
+        return {
+            "color": "#00FF00",
+            "fallback": "GuardDuty Announcement - New/Updated Findings",
+            "fields": [
+                {
+                    "title": "Finding Type",
+                    "value": f"`{detail['findingType']}`",
+                    "short": False,
+                },
+                {
+                    "title": "Description",
+                    "value": f"`{detail['findingDescription']}`",
+                    "short": False,
+                },
+                {
+                    "title": "Link",
+                    "value": f"`{detail['link']}`",
+                    "short": False,
+                },
+            ],
+            "text": "AWS GuardDuty Announcement",
+        }
+
+    elif "featureDetails" in message:
+        detail = message["featureDetails"][0]
+
+        return {
+            "color": "#00FF00",
+            "fallback": "GuardDuty Announcement - New Feature",
+            "fields": [
+                {
+                    "title": "Description",
+                    "value": f"`{detail['featureDescription']}`",
+                    "short": False,
+                },
+                {
+                    "title": "Link",
+                    "value": f"`{detail['featureLink']}`",
+                    "short": False,
+                },
+            ],
+            "text": "AWS GuardDuty Announcement",
+        }
+
+    elif "AnnouncementType" in message and "Title" in message:
+        return {
+            "color": "#00FF00",
+            "fallback": "SecurityHub Announcement",
+            "fields": [
+                {
+                    "title": "Title",
+                    "value": f"`{message['Title']}`",
+                    "short": False,
+                },
+                {
+                    "title": "Type",
+                    "value": f"`{message['AnnouncementType']}`",
+                    "short": False,
+                },
+                {
+                    "title": "Description",
+                    "value": f"`{message['Description']}`",
+                    "short": False,
+                },
+            ],
+            "text": "AWS SecurityHub Announcement",
+        }
+
+    else:
+        return False
 
 class AwsHealthCategory(Enum):
     """Maps AWS Health eventTypeCategory to Slack message format color
@@ -360,6 +441,10 @@ def get_slack_message_payload(
     elif "attachments" in message or "text" in message:
         payload = {**payload, **message}
 
+    elif "findingDetails" in message or "featureDetails" in message or "AnnouncementType" in message:
+        notification = format_security_announcements(message=message)
+        attachment = notification
+
     else:
         attachment = format_default(message=message, subject=subject)
 
@@ -406,7 +491,12 @@ def lambda_handler(event: Dict[str, Any], context: Dict[str, Any]) -> str:
 
     for record in event["Records"]:
         sns = record["Sns"]
-        subject = sns["Subject"]
+
+        if "Subject" in sns:
+            subject = sns["Subject"]
+        else:
+            subject = ""
+
         message = sns["Message"]
         region = sns["TopicArn"].split(":")[3]
 
