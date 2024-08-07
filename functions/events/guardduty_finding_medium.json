@@ -2,7 +2,7 @@
   "detail-type": "GuardDuty Finding",
   "region": "us-east-1",
   "detail": {
-    "id": "sample-id-2",
+    "accountId": "sample-id-2",
     "title": "SAMPLE Unprotected port on EC2 instance i-123123123 is being probed",
     "severity": 5,
     "description": "EC2 instance has an unprotected port which is being probed by a known malicious host.",

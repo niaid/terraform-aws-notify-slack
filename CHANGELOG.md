@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## (2024-05-01)
+
+* Update Python lambda runtime from `3.8` to `3.11`
+
+
 ## [5.3.0](https://github.com/terraform-aws-modules/terraform-aws-notify-slack/compare/v5.2.0...v5.3.0) (2022-06-17)
 
 

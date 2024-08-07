@@ -204,6 +204,7 @@ def format_guardduty_finding(message: Dict[str, Any], region: str) -> Dict[str, 
         "text": f"AWS GuardDuty Finding - {detail.get('title')}",
     }
 
+
 def format_security_announcements(message: Dict[str, Any]) -> Dict[str, Any]:
     """
     Format GuardDuty & SecurityHub announcements into Slack message format
@@ -284,7 +285,8 @@ def format_security_announcements(message: Dict[str, Any]) -> Dict[str, Any]:
         }
 
     else:
-        return False
+        return {}
+
 
 class AwsHealthCategory(Enum):
     """Maps AWS Health eventTypeCategory to Slack message format color
