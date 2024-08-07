@@ -8,7 +8,7 @@ Doing serverless with Terraform? Check out [serverless.tf framework](https://ser
 
 ## Supported Features
 
-- AWS Lambda runtime Python 3.8
+- AWS Lambda runtime Python 3.11
 - Create new SNS topic or use existing one
 - Support plaintext and encrypted version of Slack webhook URL
 - Most of Slack message options are customizable
