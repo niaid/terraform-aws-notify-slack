@@ -285,7 +285,7 @@ def format_security_announcements(message: Dict[str, Any]) -> Dict[str, Any]:
         }
 
     else:
-        return False
+        return {}
 
 
 class AwsHealthCategory(Enum):
