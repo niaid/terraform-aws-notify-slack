@@ -1,45 +1,3 @@
-data "aws_caller_identity" "current" {}
-data "aws_partition" "current" {}
-data "aws_region" "current" {}
-
-locals {
-  sns_topic_arn = var.sns_topic_arn != "" ? var.sns_topic_arn : try(
-    aws_sns_topic.this[0].arn,
-    "arn:${data.aws_partition.current.id}:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${var.sns_topic_name}",
-    ""
-  )
-
-  lambda_policy_document = {
-    sid       = "AllowWriteToCloudwatchLogs"
-    effect    = "Allow"
-    actions   = ["logs:CreateLogStream", "logs:PutLogEvents"]
-    resources = [replace("${try(aws_cloudwatch_log_group.lambda[0].arn, "")}:*", ":*:*", ":*")]
-  }
-
-  lambda_policy_document_kms = {
-    sid       = "AllowKMSDecrypt"
-    effect    = "Allow"
-    actions   = ["kms:Decrypt"]
-    resources = [var.kms_key_arn]
-  }
-
-  lambda_handler = try(split(".", basename(var.lambda_source_path))[0], "notify_slack")
-}
-
-data "aws_iam_policy_document" "lambda" {
-  count = var.create ? 1 : 0
-
-  dynamic "statement" {
-    for_each = concat([local.lambda_policy_document], var.kms_key_arn != "" ? [local.lambda_policy_document_kms] : [])
-    content {
-      sid       = statement.value.sid
-      effect    = statement.value.effect
-      actions   = statement.value.actions
-      resources = statement.value.resources
-    }
-  }
-}
-
 resource "aws_cloudwatch_log_group" "lambda" {
   count = var.create ? 1 : 0
 
@@ -59,7 +17,6 @@ resource "aws_sns_topic" "this" {
 
   tags = merge(var.tags, var.sns_topic_tags)
 }
-
 
 resource "aws_sns_topic_subscription" "sns_notify_slack" {
   count = var.create ? 1 : 0
